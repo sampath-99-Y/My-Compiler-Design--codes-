@@ -1,0 +1,52 @@
+
+%% 
+((http)|(ftp))s?:\/\/[a-zA-Z0-9]{2, }(\.[a-z]{2, }) 
+	+(\/[a-zA-Z0-9+=?]*)* {printf("\nURL Valid\n");} 
+
+.+ {printf("\nURL Invalid\n");} 
+
+%% 
+
+
+// driver program 
+void main() 
+{ 
+	printf("\nEnter URL : "); 
+	yylex(); 
+	printf("\n"); 
+} 	%{ 
+int n = 0 ;  
+%} 
+%% 
+"while"|"if"|"else"|"int"|"float"  {n++;printf("\t keywords : %s", yytext);}   
+[a-zA-Z_][a-zA-Z0-9_]* {n++;printf("\t identifier : %s", yytext);} 
+"<="|"=="|"="|"++"|"-"|"*"|"+" {n++;printf("\t operator : %s", yytext);}
+[(){}|, ;]    {n++;printf("\t separator : %s", yytext);} 
+[0-9]*"."[0-9]+ {n++;printf("\t float : %s", yytext);}  
+[0-9]+ {n++;printf("\t integer : %s", yytext);}                        
+.    ;
+%% 
+int yywrap(){
+return 1;
+}
+int main() 
+{ 
+    yylex();
+    printf("\n total no. of token = %d\n", n);   
+
+}
+	%{
+%}
+%%
+
+[a-z] {printf("%c",yytext[0]-32);}
+. {}
+
+%%
+int yywrap(void){}
+
+int main()
+{
+printf("\nenter the string : ");
+yylex();
+}
