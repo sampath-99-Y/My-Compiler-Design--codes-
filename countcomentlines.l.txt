@@ -1,0 +1,47 @@
+%{
+#include <stdio.h>
+
+int comment_lines = 0;
+%}
+
+%x BLOCKCOMMENT
+%%
+
+"//".*        { comment_lines++; }
+
+"/*"          { comment_lines++; BEGIN(BLOCKCOMMENT); }
+
+<BLOCKCOMMENT>\n   { comment_lines++; }
+
+<BLOCKCOMMENT>"*/" { BEGIN(INITIAL); }
+
+<BLOCKCOMMENT>.    ;
+
+\n             ;
+.              ;
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc < 2) {
+        printf("Usage: %s <input_file>\n", argv[0]);
+        return 1;
+    }
+
+    yyin = fopen(argv[1], "r");
+    if (!yyin) {
+        printf("Cannot open file\n");
+        return 1;
+    }
+
+    yylex();
+
+    printf("Number of comment lines = %d\n", comment_lines);
+
+    fclose(yyin);
+    return 0;
+}

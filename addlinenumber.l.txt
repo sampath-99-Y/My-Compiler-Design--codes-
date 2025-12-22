@@ -1,0 +1,36 @@
+%{
+#include <stdio.h>
+int ln = 0;
+%}
+
+%%
+
+.*\n   { ln++; fprintf(yyout, "%d: %s", ln, yytext); }
+
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    yyin = fopen("simple.txt", "r");
+    if (!yyin) {
+        printf("Cannot open input file\n");
+        return 1;
+    }
+
+    yyout = fopen("out.txt", "w");
+    if (!yyout) {
+        printf("Cannot open output file\n");
+        return 1;
+    }
+
+    yylex();
+
+    fclose(yyin);
+    fclose(yyout);
+
+    printf("Lines numbered successfully. Check out.txt\n");
+    return 0;
+}
